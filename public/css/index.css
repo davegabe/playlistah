@@ -1,0 +1,55 @@
+body {
+  text-align: center;
+  background: #343a40;
+  font-family: sans-serif;
+  font-weight: 100;
+}
+
+h1 {
+  font-weight: 100;
+  font-size: 40px;
+  margin: 40px 0px 20px;
+}
+
+.link {
+  margin-top: 40px;
+}
+
+.form {
+  z-index: 15;
+  position: relative;
+  background: white;
+  width: 85%;
+  border-radius: 4px;
+  box-shadow: 0 0 30px rgba(black, .1);
+  box-sizing: border-box;
+  margin: 100px auto 10px;
+  overflow: hidden;
+}
+
+label {
+  display: block;
+  margin: 0 0 10px;
+  color: gray;
+  font-size: 12px;
+  font-weight: semibold;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: .2em;
+
+}
+
+input {
+  margin: auto;
+  margin-bottom: 15px;
+}
+
+.btn {
+  margin-top: 15px;
+}
+
+.formPlaylist {
+  width: 90%;
+  margin: auto;
+  margin-bottom: 30px;
+}

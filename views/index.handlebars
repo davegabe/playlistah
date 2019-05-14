@@ -1,0 +1,24 @@
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
+
+    <link rel="stylesheet" href="/css/index.css">
+    </link>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Playlistah - Collaborative Playlists</title>
+</head>
+
+<body>
+    <div class="form container">
+        <h1>Create Playlist</h1>
+        <form action="/" class="formPlaylist" method="POST">
+            <label for="name">Title</label>
+            <input id="name" type="text" class="form-control" name="name" pattern="[a-zA-Z0-9_]{1,100}" title="Only letters, numbers and underscore accepted"
+                required />
+            <input type="submit" class="btn btn-light" value="Submit" />
+        </form>
+    </div>
+</body>
