@@ -16,8 +16,13 @@
         <h1>Create Playlist</h1>
         <form action="/" class="formPlaylist" method="POST">
             <label for="name">Title</label>
-            <input id="name" type="text" class="form-control" name="name" pattern="[a-zA-Z0-9_]{1,100}" title="Only letters, numbers and underscore accepted"
-                required />
+            <input id="name" type="text" class="form-control" name="name" pattern="[a-zA-Z0-9_]{1,100}" title="Only letters, numbers and underscore accepted" required />
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="1" name="isTemporary"  id="isTemporary">
+                    <label class="form-check-label" for="isTemporary">
+                        Temporary
+                    </label>
+                </div>
             <input type="submit" class="btn btn-light" value="Submit" />
         </form>
     </div>

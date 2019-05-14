@@ -7,6 +7,7 @@ const playlistSchema = mongoose.Schema({
     name: String,
     date: Date,
     admin: String,
+    isTemporary: Boolean,
     videos: [{
         id: String,
         session: String
@@ -49,9 +50,13 @@ add = (playlist) => {
                     if (err) return reject(err);
                     resolve("Playlist created.");
                 });
-
             } else {
-                reject(Error("Playlist already exist."));
+                if((result.videos.length>0 && Date.now()-result.date > 1000*60*60*24 /*1 giorno*/) || result.videos.length==0){
+                    Playlist.update(result,playlist);
+                    resolve("Playlist created.");
+                } else {
+                    reject(Error("Playlist already exist."));
+                }
             }
         });
     });

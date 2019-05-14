@@ -5,6 +5,9 @@ const removedAlert = `<div class="alert alert-success" role="alert"> REMOVED </d
 const alreadyRemovedAlert = `<div class="alert alert-danger" role="alert"> CANNOT REMOVE VIDEO </div>`;
 var isFirst = true;
 var waitingSearch;
+var currentVideo=0;
+var videos;
+var isTemporary=false;
 
 var isMobile = false;
 
@@ -27,7 +30,6 @@ async function getInfoFromVideoId(videos, sessions) {
             key: gapikey
         },
         function (data) {
-            console.log(data)
             $.each(data.items, function (i, item) {
                 // Get Output
                 var output = getOutput(item, false, sessions[i]);
@@ -90,6 +92,7 @@ async function getVideos() {
         }
     });
     playlist = await playlist.json();
+    videos = playlist.videos;
     updateVideoList(playlist, true);
 }
 
@@ -106,6 +109,7 @@ async function addVideo(id) {
         })
     });
     playlist = await playlist.json();
+    videos = playlist.videos;
     updateVideoList(playlist, false);
 }
 
@@ -122,7 +126,7 @@ async function removeVideo(id) {
         })
     });
     playlist = await playlist.json();
-    console.log(playlist)
+    videos = playlist.videos;
     updateVideoList(playlist, true);
 }
 
@@ -198,6 +202,50 @@ function getOutput(item, isSearch, session) {
         </li>
         <div class="clearfix"></div>`;
     return output;
+}
+
+function openDialog(){
+    $("#alerts").empty();
+}
+
+// create youtube player
+var player = null;
+function openVideo() {
+    if(player==null){
+        if(videos.length>0){
+            player = new YT.Player('player', {
+                height: '390',
+                width: '640',
+                videoId: videos[currentVideo].id,
+                events: {
+                'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange
+                }
+            });
+        } else {
+
+        }
+    }
+}
+
+// autoplay video
+function onPlayerReady(event) {
+    event.target.playVideo();
+}
+
+// when video ends
+function onPlayerStateChange(event) {        
+    if(event.data === 0) {
+        if(!isTemporary){
+            if(currentVideo+1<videos.length){
+                currentVideo++;
+                player.loadVideoById(videos[currentVideo].id, 0, "large");
+            }
+        } else {
+            removeVideo(videos[0].id);
+            player.loadVideoById(videos[currentVideo].id, 0, "large");
+        }
+    }
 }
 
 getVideos();

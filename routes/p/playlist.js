@@ -24,7 +24,8 @@ router.get("/:name", async function (req, res, next) {
         var playlist = await getPlaylist(name);
         res.render("playlist", {
             state: "SUCCESS",
-            name: playlist.name
+            name: playlist.name,
+            isTemporary: (playlist.isTemporary==null?false:playlist.isTemporary)
         });
     } catch (e) {
         next(createError(404));
