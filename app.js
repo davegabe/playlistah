@@ -4,18 +4,21 @@ var path = require('path');
 var exphbs = require('express-handlebars');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
-var indexRouter = require('./routes/index');
-var playlistRouter = require('./routes/p/playlist');
+var socket_io = require("socket.io");
 
 var app = express();
+var io = socket_io();
+app.io = io;
+
+var indexRouter = require('./routes/index');
+var playlistRouter = require('./routes/p/playlist')(app.io);
 
 app.use(cookieParser());
 app.use((req, res, next) => {
-  let id = req.cookies._id;
-  if (!id) {
-    let id = new Date().getTime().toString();
-    res.cookie('_id', id);
+  let user = req.cookies.user;
+  if (!user) {
+    let user = new Date().getTime().toString();
+    res.cookie('user', user, { expires: new Date(new Date().getTime() + (1000*60*60*24*365*10)) });
   }
   next()
 })

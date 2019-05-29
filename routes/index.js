@@ -14,7 +14,7 @@ router.post('/', async function (req, res, next) {
         name: req.body.name,
         isTemporary: (req.body.isTemporary=="1"?true:false),
         date: Date.now(),
-        admin: req.cookies._id
+        admin: req.cookies.user
     };
     try {
         await addPlaylist(playlist)

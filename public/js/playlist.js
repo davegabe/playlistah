@@ -8,6 +8,7 @@ var waitingSearch;
 var currentVideo=0;
 var videos;
 var isTemporary=false;
+var playlistID = window.location.pathname.split("/")[2];
 
 var isMobile = false;
 
@@ -42,23 +43,12 @@ async function getInfoFromVideoId(videos, sessions) {
 }
 
 async function updateVideoList(playlist, isRemove) {
-    if (playlist.state == "ERROR") {
-        if (isRemove)
-            $("#alerts").append(alreadyRemovedAlert);
-        else
-            $("#alerts").append(alreadyQueuedAlert);
-        setTimeout(() => {
-            $("#alerts").empty();
-        }, 2500);
-        return;
-    }
-
     $("#videos-list").empty();
     var videoList="";
     var sessions=[];
     var i=0;
     while(i<playlist.videos.length){
-        videoList+=playlist.videos[i].id
+        videoList+=playlist.videos[i].id;
         sessions.push(playlist.videos[i].session);
         i++;
         if(i%50==0||i==playlist.videos.length){
@@ -84,50 +74,23 @@ async function updateVideoList(playlist, isRemove) {
 }
 
 async function getVideos() {
-    var playlist = await fetch(window.location.href + "/videos", {
-        method: "GET",
-        headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json"
-        }
+    socket.emit('GETPLAYLIST', {
+        playlistID: playlistID
     });
-    playlist = await playlist.json();
-    videos = playlist.videos;
-    updateVideoList(playlist, true);
 }
 
 async function addVideo(id) {
-    var playlist = await fetch(window.location.href, {
-        method: "POST",
-        headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            action: "ADD",
-            video: id
-        })
+    socket.emit('ADDVIDEO', {
+        playlistID: playlistID,
+        video: id
     });
-    playlist = await playlist.json();
-    videos = playlist.videos;
-    updateVideoList(playlist, false);
 }
 
 async function removeVideo(id) {
-    var playlist = await fetch(window.location.href, {
-        method: "POST",
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            action: "REMOVE",
-            video: id
-        })
+    socket.emit('REMOVEVIDEO', {
+        playlistID: playlistID,
+        video: id
     });
-    playlist = await playlist.json();
-    videos = playlist.videos;
-    updateVideoList(playlist, true);
 }
 
 async function submitSearch() {
@@ -222,8 +185,6 @@ function openVideo() {
                 'onStateChange': onPlayerStateChange
                 }
             });
-        } else {
-
         }
     }
 }
@@ -243,9 +204,32 @@ function onPlayerStateChange(event) {
             }
         } else {
             removeVideo(videos[0].id);
-            player.loadVideoById(videos[currentVideo].id, 0, "large");
+            if(videos.length>1)
+            player.loadVideoById(videos[1].id, 0, "large");
         }
     }
 }
 
-getVideos();
+var socket = io.connect(window.location.hostname+":"+window.location.port);
+socket.on('connect', function(){
+    getVideos();
+});
+
+socket.on(playlistID + " video", function (playlist) {
+    videos = playlist.videos;
+    updateVideoList(playlist, playlist.isRemoved);
+});
+
+socket.on(playlistID, function (playlist) {
+    if (playlist.state == "ERROR") {
+        if (playlist.isRemoved)
+            $("#alerts").append(alreadyRemovedAlert);
+        else
+            $("#alerts").append(alreadyQueuedAlert);
+        setTimeout(() => {
+            $("#alerts").empty();
+        }, 2500);
+        return;
+    }
+    getVideos();
+});

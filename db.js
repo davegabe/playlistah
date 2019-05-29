@@ -27,7 +27,7 @@ get = (name, session) => {
                 result = result.toJSON();
                 for (var i = 0; i < result.videos.length; i++) {
                     let isSessionValid = session == result.videos[i].session | session == result.admin;
-                    delete result.videos[i]._id;
+                    delete result.videos[i].user;
                     delete result.videos[i].session;
                     result.videos[i].session = isSessionValid;
                 }

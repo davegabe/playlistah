@@ -12,6 +12,7 @@ body {
 .alert {
 	width: 75%;
 	position: fixed;
+	bottom:80px;
 	left: 50%;
 	margin-left: -37.5%;
 	text-align: center;
