@@ -23,17 +23,18 @@ if (
     isMobile = true;
 }
 
-async function getInfoFromVideoId(videos, sessions) {
+async function getInfoFromVideoId(videos, sessions, offset) {
+    console.log(offset)
     await $.get(
         "https://www.googleapis.com/youtube/v3/videos", {
-            part: "snippet, id",
+            part: "snippet, id, contentDetails",
             id: videos,
             key: gapikey
         },
         function (data) {
             $.each(data.items, function (i, item) {
                 // Get Output
-                var output = getOutput(item, false, sessions[i]);
+                var output = getOutput(item, false, sessions[i], (50*offset)+i);
 
                 // display results
                 $("#videos-list").append(output);
@@ -43,6 +44,7 @@ async function getInfoFromVideoId(videos, sessions) {
 }
 
 async function updateVideoList(playlist, isRemove) {
+    var tempScrollTop = $(window).scrollTop();
     $("#videos-list").empty();
     var videoList="";
     var sessions=[];
@@ -52,9 +54,10 @@ async function updateVideoList(playlist, isRemove) {
         sessions.push(playlist.videos[i].session);
         i++;
         if(i%50==0||i==playlist.videos.length){
-            await getInfoFromVideoId(videoList, sessions);
+            await getInfoFromVideoId(videoList, sessions, Math.ceil(i/50)-1);
             videoList="";
             sessions=[];
+            if(i==playlist.videos.length) $(window).scrollTop(tempScrollTop);
         }else{
             videoList+=",";
         }
@@ -131,7 +134,7 @@ async function search(q) {
 }
 
 // Build output
-function getOutput(item, isSearch, session) {
+function getOutput(item, isSearch, session, i) {
     var videoID = item.id;
     if (isMobile) {
         var title = item.snippet.title.substring(0, 30);
@@ -142,6 +145,13 @@ function getOutput(item, isSearch, session) {
     var description = item.snippet.description;
     var thumb = item.snippet.thumbnails.default.url;
     var channelTitle = item.snippet.channelTitle;
+    if(!isSearch){
+        var time = item.contentDetails.duration.replace(/PT(\d+)M(\d+)S/, "$1:$2").replace(/PT(\d+)M/, "$1:00");
+        let seconds = time.split(":")[1].length;
+        for(;seconds<2;seconds++){
+            time+="0";
+        }
+    }
     var videoDate = new Date(item.snippet.publishedAt).toDateString();
 
     var xButton = `<button type="button" class="close" onClick="removeVideo('${videoID}')">×</button>`;
@@ -157,7 +167,11 @@ function getOutput(item, isSearch, session) {
     var output = `<li class="list-group-item song" video-id="${videoID}">
             ${xButton}
             <div ${onClickScript}>
+                <div id="image" style="position:relative">
                 <img class="align-self-center mr-3" src="${thumb}">
+                    ${!isSearch?`<div class="time"> ${time} </div>`:"" }
+                    <div class="play" onclick="playVideo(${i})"></div>
+                </div>
                 <div class="media-body">
                 <h5 class="mt-0">${title}</h5>
                 <small>By <span class="cTitle">${channelTitle}</small>
@@ -177,14 +191,14 @@ function openVideo() {
     if(player==null){
         if(videos.length>0){
             player = new YT.Player('player', {
-                height: '390',
-                width: '640',
+                width: '100%',
                 videoId: videos[currentVideo].id,
                 events: {
                 'onReady': onPlayerReady,
                 'onStateChange': onPlayerStateChange
                 }
             });
+            animatePlayVideo();
         }
     }
 }
@@ -194,9 +208,11 @@ function onPlayerReady(event) {
     event.target.playVideo();
 }
 
+
 // when video ends
-function onPlayerStateChange(event) {        
+function onPlayerStateChange(event) {
     if(event.data === 0) {
+    let oldCurrentVideo=currentVideo;
         if(!isTemporary){
             if(currentVideo+1<videos.length){
                 currentVideo++;
@@ -204,9 +220,28 @@ function onPlayerStateChange(event) {
             }
         } else {
             removeVideo(videos[0].id);
+            currentVideo=1;
             if(videos.length>1)
-            player.loadVideoById(videos[1].id, 0, "large");
+            player.loadVideoById(videos[currentVideo].id, 0, "large");
         }
+        animatePlayVideo(oldCurrentVideo);
+    }
+}
+
+function animatePlayVideo(oldCurrentVideo){
+    if(oldCurrentVideo!=null)
+        $( `li[video-id='${videos[oldCurrentVideo].id}']`).find("div.play").removeAttr('style');
+    $( `li[video-id='${videos[currentVideo].id}']`).find("div.play").css({'background-image':'url("../../images/eq.gif")'});
+}
+
+function playVideo(id){
+    let oldCurrentVideo=currentVideo;
+    currentVideo=id;
+    if(player!=null){
+        player.loadVideoById(videos[currentVideo].id, 0, "large");
+        animatePlayVideo(oldCurrentVideo);
+    } else {
+        openVideo();
     }
 }
 

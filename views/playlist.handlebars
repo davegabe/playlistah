@@ -25,14 +25,11 @@
             <div class="collapse" id="collapseVideo">
                 <div class="card card-body">
                     <div id="player"></div>
-<button type="button" class="btn btn-light">Light</button>
                 </div>
             </div>
-            {{#if isAdmin}}
                 <a class="btn btn-primary" onclick="openVideo()" data-toggle="collapse" href="#collapseVideo" role="button" aria-expanded="false" aria-controls="collapseVideo">
                     Player
                 </a>
-            {{/if}}
         </center>
         <ul id="videos-list" class="list-group"></ul>
     </div>

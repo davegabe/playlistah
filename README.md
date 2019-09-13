@@ -11,13 +11,15 @@ RELEASE:    https://playlistah.davegabe.it/
 - Add videos:           Directly search on YouTube and add videos!
 - Remove videos:        If you're a guest, you can remove only your videos. If you're the admin, you can remove everything. It's all about power.
 
-- **New stuff**
+**New stuff**
 - Youtube Player:       You can directly play the playlist!
 - Temporary playlists:  Ephemeral playlists? Thats it! Just add, play and see the videos disappear one by one. Enjoy the ephemerality! (Yah, it's also useful for streamers... I guess)
 - Sockets:              When someone changes something in the playlist, you'll directly get the update.
 
 
 ## Future Improvements
+
+- **Max length**
 
 - **Cool interface**
 
