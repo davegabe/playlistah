@@ -21,16 +21,6 @@
     </nav>
     <div id="alerts"></div>
     <div class="site-content container-fluid">
-        <center>
-            <div class="collapse" id="collapseVideo">
-                <div class="card card-body">
-                    <div id="player"></div>
-                </div>
-            </div>
-                <a class="btn btn-primary" onclick="openVideo()" data-toggle="collapse" href="#collapseVideo" role="button" aria-expanded="false" aria-controls="collapseVideo">
-                    Player
-                </a>
-        </center>
         <ul id="videos-list" class="list-group"></ul>
     </div>
     <div class="modal fade" id="searchModal" role="dialog">
@@ -54,6 +44,14 @@
         </div>
     </div>
     <footer class="footer">
+        <div class="autoRatio">
+            <div >
+                <div id="player" class="player"></div>
+            </div>
+        </div>
         <button type="button" onclick="openDialog()" class="btn btn-info btn-lg" data-toggle="modal" data-target="#searchModal">Add video</button>
+        <div class="float-right">
+            <button id="arrowHide" type="button" onclick="showPlayer()" class="btn btn-outline-dark btn-lg">V</button>
+        </div>
     </footer>
 </body>

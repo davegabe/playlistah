@@ -24,7 +24,6 @@ if (
 }
 
 async function getInfoFromVideoId(videos, sessions, offset) {
-    console.log(offset)
     await $.get(
         "https://www.googleapis.com/youtube/v3/videos", {
             part: "snippet, id, contentDetails",
@@ -65,6 +64,7 @@ async function updateVideoList(playlist, isRemove) {
 
     if (isFirst) {
         isFirst = false;
+        openVideo();
     } else {
         if (isRemove)
             $("#alerts").append(removedAlert);
@@ -169,8 +169,8 @@ function getOutput(item, isSearch, session, i) {
             <div ${onClickScript}>
                 <div id="image" style="position:relative">
                 <img class="align-self-center mr-3" src="${thumb}">
-                    ${!isSearch?`<div class="time"> ${time} </div>`:"" }
-                    <div class="play" onclick="playVideo(${i})"></div>
+                    ${!isSearch?`<div class="time"> ${time} </div>
+                    <div class="play" onclick="playVideo(${i})"></div>`:"" }
                 </div>
                 <div class="media-body">
                 <h5 class="mt-0">${title}</h5>
@@ -190,29 +190,23 @@ var player = null;
 function openVideo() {
     if(player==null){
         if(videos.length>0){
-            player = new YT.Player('player', {
-                width: '100%',
+            player = new YT.Player("player", {
+                width: "100%",
+                height: "100%",
                 videoId: videos[currentVideo].id,
                 events: {
-                'onReady': onPlayerReady,
-                'onStateChange': onPlayerStateChange
+                "onStateChange": onPlayerStateChange
                 }
             });
             animatePlayVideo();
+            $( `li[video-id='${videos[currentVideo].id}']`).find("div.play").css({'background-image':'url("../../images/eq-static.gif")'});
         }
     }
 }
 
-// autoplay video
-function onPlayerReady(event) {
-    event.target.playVideo();
-}
-
-
-// when video ends
 function onPlayerStateChange(event) {
-    if(event.data === 0) {
-    let oldCurrentVideo=currentVideo;
+    if(event.data === YT.PlayerState.ENDED) {
+        let oldCurrentVideo=currentVideo;
         if(!isTemporary){
             if(currentVideo+1<videos.length){
                 currentVideo++;
@@ -225,6 +219,14 @@ function onPlayerStateChange(event) {
             player.loadVideoById(videos[currentVideo].id, 0, "large");
         }
         animatePlayVideo(oldCurrentVideo);
+    } else {
+        if(event.data === YT.PlayerState.PAUSED) {
+            $( `li[video-id='${videos[currentVideo].id}']`).find("div.play").css({'background-image':'url("../../images/eq-static.gif")'});
+        } else {
+            if(event.data === YT.PlayerState.PLAYING) {
+                $( `li[video-id='${videos[currentVideo].id}']`).find("div.play").css({'background-image':'url("../../images/eq.gif")'});
+            }
+        }
     }
 }
 
@@ -242,6 +244,17 @@ function playVideo(id){
         animatePlayVideo(oldCurrentVideo);
     } else {
         openVideo();
+    }
+}
+
+function showPlayer() {
+    if($('div.autoRatio').width()>0){
+        $('div.autoRatio').css({'width':'0%'});
+        $('button#arrowHide').css({'transform': 'rotate(180deg)'});
+    }
+    else{
+        $('div.autoRatio').css({'width':'40%'});
+        $('button#arrowHide').css({'transform': 'rotate(0deg)'});
     }
 }
 
