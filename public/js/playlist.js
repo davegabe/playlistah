@@ -193,6 +193,13 @@ function openVideo() {
             player = new YT.Player("player", {
                 width: "100%",
                 height: "100%",
+                playerVars: { 
+                    modestbranding: 1,
+                    rel: 0,
+                    showinfo: 0,
+                    iv_load_policy: 3,
+                    cc_load_policy: 0
+                },
                 videoId: videos[currentVideo].id,
                 events: {
                 "onStateChange": onPlayerStateChange
@@ -248,12 +255,12 @@ function playVideo(id){
 }
 
 function showPlayer() {
-    if($('div.autoRatio').width()>0){
-        $('div.autoRatio').css({'width':'0%'});
+    if($('div.video').width()>0){
+        $('div.video').css({'width':'0%'});
         $('button#arrowHide').css({'transform': 'rotate(180deg)'});
     }
     else{
-        $('div.autoRatio').css({'width':'40%'});
+        $('div.video').width('');
         $('button#arrowHide').css({'transform': 'rotate(0deg)'});
     }
 }

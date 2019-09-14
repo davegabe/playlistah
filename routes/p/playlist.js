@@ -35,6 +35,21 @@ module.exports = function(io) {
             next(createError(404));
         }
     });
+
+    
+    router.get("/:name/videos", async function (req, res, next) {
+        let name = req.params.name;
+        let session = req.cookies._id;
+        try {
+            var playlist = await getPlaylist(name, session);
+            res.json({
+                state: "SUCCESS",
+                videos: playlist.videos
+            });
+        } catch (e) {
+            next(createError(404));
+        }
+    });
     
     io.on("connection", (socket)=>{
         socket.on('GETPLAYLIST', async function (data) {
