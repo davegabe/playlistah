@@ -1,7 +1,6 @@
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
-var exphbs = require('express-handlebars');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var socket_io = require("socket.io");
@@ -23,19 +22,17 @@ app.use((req, res, next) => {
   next()
 })
 
-var hbs = exphbs.create();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-
-app.engine('handlebars', hbs.engine);
-app.set('view engine', 'handlebars');
+app.set('view engine', 'hbs');
 
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({
   extended: false
 }));
+app.use('/bulma', express.static(__dirname + '/node_modules/bulma/css'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
@@ -54,7 +51,7 @@ app.use(function (err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.render('error', {title: "Error 404"});
 });
 
 module.exports = app;

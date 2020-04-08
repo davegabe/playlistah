@@ -8,6 +8,7 @@ module.exports = function(io) {
     var getPlaylist = require("../../db").get;
     var addVideo = require("../../db").addVideo;
     var removeVideo = require("../../db").removeVideo;
+    
     /* GET home page. */
     router.get("/:name", async function (req, res, next) {
         let name = req.params.name;
@@ -27,6 +28,8 @@ module.exports = function(io) {
             let isAdmin = playlist.admin==req.cookies.user;
             res.render("playlist", {
                 state: "SUCCESS",
+                page: "playlist",
+                title: playlist.name,
                 name: playlist.name,
                 isTemporary: isTemporary,
                 isAdmin: isAdmin

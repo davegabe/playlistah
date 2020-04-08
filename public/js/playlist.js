@@ -1,4 +1,4 @@
-const gapikey = "AIzaSyCYQXRpCEWLhDV6YOT1iVP7lO9ts2xIluc";
+const gapikey = "AIzaSyBR7EnowNigvDzFmSAm12D53e0_bF-uSd4";
 const queuedAlert = `<div class="alert alert-success" role="alert"> QUEUED </div>`;
 const alreadyQueuedAlert = `<div class="alert alert-danger" role="alert"> ALREADY IN PLAYLIST </div>`;
 const removedAlert = `<div class="alert alert-success" role="alert"> REMOVED </div>`;
@@ -22,6 +22,29 @@ if (
 ) {
     isMobile = true;
 }
+
+//socket stuff
+
+async function getVideos() {
+    socket.emit('GETPLAYLIST', {
+        playlistID: playlistID
+    });
+}
+
+async function addVideo(id) {
+    socket.emit('ADDVIDEO', {
+        playlistID: playlistID,
+        video: id
+    });
+}
+
+async function removeVideo(id) {
+    socket.emit('REMOVEVIDEO', {
+        playlistID: playlistID,
+        video: id
+    });
+}
+//
 
 async function getInfoFromVideoId(videos, sessions, offset) {
     await $.get(
@@ -76,26 +99,6 @@ async function updateVideoList(playlist, isRemove) {
     }
 }
 
-async function getVideos() {
-    socket.emit('GETPLAYLIST', {
-        playlistID: playlistID
-    });
-}
-
-async function addVideo(id) {
-    socket.emit('ADDVIDEO', {
-        playlistID: playlistID,
-        video: id
-    });
-}
-
-async function removeVideo(id) {
-    socket.emit('REMOVEVIDEO', {
-        playlistID: playlistID,
-        video: id
-    });
-}
-
 async function submitSearch() {
     q = $("#query").val();
 
@@ -146,11 +149,20 @@ function getOutput(item, isSearch, session, i) {
     var thumb = item.snippet.thumbnails.default.url;
     var channelTitle = item.snippet.channelTitle;
     if(!isSearch){
-        var time = item.contentDetails.duration.replace(/PT(\d+)M(\d+)S/, "$1:$2").replace(/PT(\d+)M/, "$1:00");
-        let seconds = time.split(":")[1].length;
-        for(;seconds<2;seconds++){
-            time+="0";
-        }
+        var time="";
+        let duration = item.contentDetails.duration;
+        let hours = duration.match(/(\d+)H/);
+        let minutes = duration.match(/(\d+)M/);
+        let seconds = duration.match(/(\d+)S/);
+        if (hours) time+=hours[1]+":";
+        if (minutes)
+            time+=minutes[1].toString().padStart(2,"0")+":";
+        else
+            time+="00:";
+        if (seconds)
+            time+=seconds[1].toString().padStart(2,"0");
+        else
+            time+="00";
     }
     var videoDate = new Date(item.snippet.publishedAt).toDateString();
 
