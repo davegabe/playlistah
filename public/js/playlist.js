@@ -24,6 +24,36 @@ if (
 }
 
 //socket stuff
+var socket = io.connect(window.location.hostname+":"+window.location.port);
+socket.on('connect', function(){
+    getVideos();
+});
+
+socket.on(playlistID + " video", function (playlist) {
+    videos = playlist.videos;
+    updateVideoList(playlist, playlist.isRemoved);
+});
+
+socket.on(playlistID, function (data) {
+    if (data.state == "ERROR") {
+        if (data.isRemoved)
+            $("#alerts").append(alreadyRemovedAlert);
+        else
+            $("#alerts").append(alreadyQueuedAlert);
+        setTimeout(() => {
+            $("#alerts").empty();
+        }, 2500);
+        return;
+    }
+    getVideos();
+});
+
+socket.on(playlistID+ " "+ document.cookie.match(/user=[^;]+/)[0].substring(5), function (data) {
+    if (data.state == "SUCCESS") {
+        $("#results").empty();
+        $("#results").append(data.html);
+    }
+});
 
 async function getVideos() {
     socket.emit('GETPLAYLIST', {
@@ -44,45 +74,21 @@ async function removeVideo(id) {
         video: id
     });
 }
-//
 
-async function getInfoFromVideoId(videos, sessions, offset) {
-    await $.get(
-        "https://www.googleapis.com/youtube/v3/videos", {
-            part: "snippet, id, contentDetails",
-            id: videos,
-            key: gapikey
-        },
-        function (data) {
-            $.each(data.items, function (i, item) {
-                // Get Output
-                var output = getOutput(item, false, sessions[i], (50*offset)+i);
-
-                // display results
-                $("#videos-list").append(output);
-            });
-        }
-    );
+async function searchVideo(query) {
+    socket.emit('SEARCHVIDEO', {
+        playlistID: playlistID,
+        query: query
+    });
 }
+//end socket stuff
 
+//html management stuff
 async function updateVideoList(playlist, isRemove) {
-    var tempScrollTop = $(window).scrollTop();
     $("#videos-list").empty();
-    var videoList="";
-    var sessions=[];
-    var i=0;
-    while(i<playlist.videos.length){
-        videoList+=playlist.videos[i].id;
-        sessions.push(playlist.videos[i].session);
-        i++;
-        if(i%50==0||i==playlist.videos.length){
-            await getInfoFromVideoId(videoList, sessions, Math.ceil(i/50)-1);
-            videoList="";
-            sessions=[];
-            if(i==playlist.videos.length) $(window).scrollTop(tempScrollTop);
-        }else{
-            videoList+=",";
-        }
+    
+    for(let i=0; i<playlist.videos.length;i++){
+        $("#videos-list").append(playlist.videos[i].html);
     }
 
     if (isFirst) {
@@ -99,6 +105,10 @@ async function updateVideoList(playlist, isRemove) {
     }
 }
 
+function openDialog(){
+    $("#alerts").empty();
+}
+
 async function submitSearch() {
     q = $("#query").val();
 
@@ -108,96 +118,14 @@ async function submitSearch() {
     }
 
     if (q.length >= 3) {
-        waitingSearch = setTimeout(search, 1000, q);
+        waitingSearch = setTimeout(searchVideo, 1000, q);
     }
 
     return false;
 }
+//end html management stuff
 
-async function search(q) {
-    $("#results").empty();
-    $.get(
-        "https://www.googleapis.com/youtube/v3/search", {
-            part: "snippet, id",
-            q: q,
-            type: "video",
-            key: gapikey
-        },
-        function (data) {
-            $.each(data.items, function (i, item) {
-                // Get Output
-                item.id = item.id.videoId;
-                var output = getOutput(item, true, false);
-
-                // display results
-                $("#results").append(output);
-            });
-        }
-    );
-}
-
-// Build output
-function getOutput(item, isSearch, session, i) {
-    var videoID = item.id;
-    if (isMobile) {
-        var title = item.snippet.title.substring(0, 30);
-        if (item.snippet.title.length > 30) title += "...";
-    } else {
-        var title = item.snippet.title;
-    }
-    var description = item.snippet.description;
-    var thumb = item.snippet.thumbnails.default.url;
-    var channelTitle = item.snippet.channelTitle;
-    if(!isSearch){
-        var time="";
-        let duration = item.contentDetails.duration;
-        let hours = duration.match(/(\d+)H/);
-        let minutes = duration.match(/(\d+)M/);
-        let seconds = duration.match(/(\d+)S/);
-        if (hours) time+=hours[1]+":";
-        if (minutes)
-            time+=minutes[1].toString().padStart(2,"0")+":";
-        else
-            time+="00:";
-        if (seconds)
-            time+=seconds[1].toString().padStart(2,"0");
-        else
-            time+="00";
-    }
-    var videoDate = new Date(item.snippet.publishedAt).toDateString();
-
-    var xButton = `<button type="button" class="close" onClick="removeVideo('${videoID}')">×</button>`;
-    var onClickScript = `class = "media" `;
-    if (isSearch) {
-        onClickScript = `class="media hand" onClick = "addVideo('${videoID}')" data-dismiss="modal"`;
-        xButton = ``;
-    }
-    if(!session){
-        xButton = ``;
-    }
-
-    var output = `<li class="list-group-item song" video-id="${videoID}">
-            ${xButton}
-            <div ${onClickScript}>
-                <div id="image" style="position:relative">
-                <img class="align-self-center mr-3" src="${thumb}">
-                    ${!isSearch?`<div class="time"> ${time} </div>
-                    <div class="play" onclick="playVideo(${i})"></div>`:"" }
-                </div>
-                <div class="media-body">
-                <h5 class="mt-0">${title}</h5>
-                <small>By <span class="cTitle">${channelTitle}</small>
-            </div>
-        </li>
-        <div class="clearfix"></div>`;
-    return output;
-}
-
-function openDialog(){
-    $("#alerts").empty();
-}
-
-// create youtube player
+//youtube player stuff
 var player = null;
 function openVideo() {
     if(player==null){
@@ -276,27 +204,4 @@ function showPlayer() {
         $('button#arrowHide').css({'transform': 'rotate(0deg)'});
     }
 }
-
-var socket = io.connect(window.location.hostname+":"+window.location.port);
-socket.on('connect', function(){
-    getVideos();
-});
-
-socket.on(playlistID + " video", function (playlist) {
-    videos = playlist.videos;
-    updateVideoList(playlist, playlist.isRemoved);
-});
-
-socket.on(playlistID, function (playlist) {
-    if (playlist.state == "ERROR") {
-        if (playlist.isRemoved)
-            $("#alerts").append(alreadyRemovedAlert);
-        else
-            $("#alerts").append(alreadyQueuedAlert);
-        setTimeout(() => {
-            $("#alerts").empty();
-        }, 2500);
-        return;
-    }
-    getVideos();
-});
+//end youtube player stuff

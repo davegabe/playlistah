@@ -7,6 +7,7 @@ var router = express.Router();
 /* GET home page. */
 router.get('/', function (req, res, next) {
     res.render('index', {
+        title: "Create Your Collaborative Playlists",
         page: "index"
     });
 });
@@ -21,7 +22,6 @@ router.post('/', async function (req, res, next) {
     try {
         await addPlaylist(playlist)
     } catch (e) {
-        console.log(e)
     }
     res.redirect("/p/" + playlist.name);
 });

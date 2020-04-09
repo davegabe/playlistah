@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+var getHtmlVideo = require("./youtubequery").getHtmlVideo;
 mongoose.connect('mongodb://' + process.env.DB_USER + ':' + process.env.DB_PASS + '@' + process.env.DB_HOST, {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -11,6 +12,7 @@ const playlistSchema = mongoose.Schema({
     isTemporary: Boolean,
     videos: [{
         id: String,
+        html: String,
         session: String
     }]
 });
@@ -31,6 +33,9 @@ get = (name, session) => {
                     delete result.videos[i].user;
                     delete result.videos[i].session;
                     result.videos[i].session = isSessionValid;
+                    //if(result.videos[i].html==""){
+                    //    result.videos[i].html = await getHtmlVideo(video.id, video.session, video.id, result.videos.length);
+                    //}
                 }
                 resolve(result);
             }
@@ -87,13 +92,14 @@ addVideo = (playlistName, video) => {
         let query = {
             name: playlistName
         }
-        Playlist.findOne(query, function (error, result) {
+        Playlist.findOne(query, async function (error, result) {
             if (error) reject(Error("Error on db"));
             if (result) {
                 for (var i = 0; i < result.videos.length; i++) {
                     if (result.videos[i].id == video.id)
                         return reject(Error("Video already exist in this playlist."));
                 }
+                video.html = await getHtmlVideo(video.id, result.videos.length);
                 result.videos.push(video);
                 result.save(function (err) {
                     if (err) return reject(err);

@@ -8,7 +8,8 @@ module.exports = function(io) {
     var getPlaylist = require("../../db").get;
     var addVideo = require("../../db").addVideo;
     var removeVideo = require("../../db").removeVideo;
-    
+    var search = require("../../youtubequery").search;
+
     /* GET home page. */
     router.get("/:name", async function (req, res, next) {
         let name = req.params.name;
@@ -39,7 +40,7 @@ module.exports = function(io) {
         }
     });
 
-    
+    /* FOR DEBUG
     router.get("/:name/videos", async function (req, res, next) {
         let name = req.params.name;
         let session = req.cookies._id;
@@ -53,7 +54,8 @@ module.exports = function(io) {
             next(createError(404));
         }
     });
-    
+    */
+
     io.on("connection", (socket)=>{
         socket.on('GETPLAYLIST', async function (data) {
             let name = data.playlistID;
@@ -61,6 +63,12 @@ module.exports = function(io) {
             var session = cookies.user;
             try {
                 var playlist = await getPlaylist(name, session);
+                if (playlist.admin!=session){   //if not admin of playlist
+                    for (let i = 0; i < playlist.videos.length; i++) {
+                        if(!playlist.videos[i].session)  //if user not added video
+                        playlist.videos[i].html=playlist.videos[i].html.replace(/<button type="button" class="close" onClick="removeVideo(.*?)button>/, "");  //remove x button (to remove video)
+                    }
+                }
                 socket.emit(name+" video", {
                     state: "SUCCESS",
                     videos: playlist.videos
@@ -78,6 +86,7 @@ module.exports = function(io) {
             var session = cookies.user;
             let video = {
                 id: id,
+                html: "",   //generated in db.addVideo
                 session: session
             };
             let name = data.playlistID;
@@ -114,6 +123,19 @@ module.exports = function(io) {
                     state: "ERROR"
                 });
             }
+        });
+
+        socket.on('SEARCHVIDEO', async function (data) {
+            let query = data.query;
+            var cookies = cookie.parse(socket.handshake.headers.cookie);
+            var session = cookies.user;
+            let name = data.playlistID;
+            html = await search(query);
+            
+            io.emit(name+" "+session, {
+                state: "SUCCESS",
+                html: html
+            });
         });
     });
 
