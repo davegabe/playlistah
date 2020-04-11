@@ -1,42 +1,58 @@
+<section class='hero is-fullheight has-background-white is-bold'>
+    <nav class="navbar has-background-dark is-fixed-top columns">
+        <div class="column">
+            <a id="arrowHide" href="/"
+                class="button is-dark is-size-4-widescreen is-size-3-desktop is-size-3-touch is-vertically-center">&lt;</a>
+        </div>
+        <div class="column has-text-centered is-completely-center">
+            <p class="title has-text-white is-dark is-size-4-widescreen is-size-3-desktop is-size-3-touch ">
+                {{name}}
+            </p>
+        </div>
+        <div class="column">
+        </div>
+    </nav>
+
+    <div class="hero-body is-inline-block">
+        <div class="modal">
+            <div class="modal-background"></div>
+            <div class="modal-card">
+                <header class="modal-card-head">
+                    <p class="modal-card-title is-size-5-widescreen is-size-4-desktop is-size-3-touch">Search</p>
+                    <button class="delete modal-close-button" aria-label="close"></button>
+                </header>
+                <section class="modal-card-body">
+                    <input class="input is-size-6-widescreen is-size-5-desktop is-size-4-touch" type="text" placeholder="Search on YouTube" id="query"
+                        onkeyup="return submitSearch()">
+                    <ul id="results">
+                    </ul>
+                </section>
+            </div>
+        </div>
+        <div class="container is-desktop is-fluid">
+            <ul id="videos-list" class="inner">
+            </ul>
+        </div>
+    </div>
+
+    <div class="alerts has-text-centered" id="alerts"></div>
+    <nav class="navbar has-background-white-ter is-fixed-bottom columns">
+        <div class="column">
+        </div>
+        <div class="column has-text-centered is-completely-center">
+            <button class="button is-dark is-size-4-widescreen is-size-3-desktop is-size-1-touch modal-button">
+                Add video
+            </button>
+        </div>
+        <div class="embed-responsive embed-responsive-16by9 video">
+            <div id="player" class="embed-responsive-item"></div>
+        </div>
+        <div class="column has-text-right">
+            <button id="arrowHide" type="button" onclick="showPlayer()"
+                class="button is-dark is-size-6-widescreen is-size-5-desktop is-size-3-touch is-vertically-center">V</button>
+        </div>
+    </nav>
+</section>
 <script src="/socket.io/socket.io.js"></script>
 <script src="https://www.youtube.com/iframe_api"></script>
 <script src="/js/playlist.js"></script>
-<nav class="navbar navbar-dark bg-dark">
-    <a style="color:white" href="/../.." role="button">&lt;</a>
-    <span class="mx-auto">{{name}}</span>
-</nav>
-<div id="alerts"></div>
-<div class="site-content container-fluid">
-    <ul id="videos-list" class="list-group"></ul>
-</div>
-<div class="modal fade" id="searchModal" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Add song</h4>
-                <button type="button" class="close" data-dismiss="modal">×</button>
-            </div>
-            <div class="modal-body">
-                <div class="fieldcontainer">
-                    <input type="search" id="query" class="form-control" placeholder="Search YouTube"
-                        onkeyup="return submitSearch()">
-                </div>
-                </br>
-                <ul id="results" class="list-group"></ul>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-<footer class="footer">
-    <div class="embed-responsive embed-responsive-16by9 video">
-        <div id="player" class="embed-responsive-item"></div>
-    </div>
-    <button type="button" onclick="openDialog()" class="btn btn-info btn-lg" data-toggle="modal"
-        data-target="#searchModal">Add video</button>
-    <div class="float-right">
-        <button id="arrowHide" type="button" onclick="showPlayer()" class="btn btn-outline-dark btn-lg">V</button>
-    </div>
-</footer>

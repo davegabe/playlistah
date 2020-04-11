@@ -99,7 +99,7 @@ addVideo = (playlistName, video) => {
                     if (result.videos[i].id == video.id)
                         return reject(Error("Video already exist in this playlist."));
                 }
-                video.html = await getHtmlVideo(video.id, result.videos.length);
+                video.html = await getHtmlVideo(video.id);
                 result.videos.push(video);
                 result.save(function (err) {
                     if (err) return reject(err);

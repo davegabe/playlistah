@@ -32,7 +32,9 @@ app.use(express.json());
 app.use(express.urlencoded({
   extended: false
 }));
-app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/dist'));
+app.use('/bulma', express.static(__dirname + '/node_modules/bulma/css'));
+app.use('/fa', express.static(__dirname + '/node_modules/@fortawesome/fontawesome-free/css'));
+app.use('/webfonts', express.static(__dirname + '/node_modules/@fortawesome/fontawesome-free/webfonts'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
@@ -51,7 +53,11 @@ app.use(function (err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error', {title: "Error 404"});
+  res.status(err.status || 500);
+  res.render('error', {
+    title: "Error 404",
+    page: "error"
+  });
 });
 
 module.exports = app;

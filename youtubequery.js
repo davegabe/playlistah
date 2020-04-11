@@ -1,4 +1,3 @@
-var fetch = require("node-fetch");
 const gapikey = process.env.GAPI_KEY;
 var {google} = require('googleapis');
 
@@ -7,13 +6,13 @@ const yt = google.youtube({
     auth: gapikey
   });
 
-async function getHtmlVideo(video, index) {
+async function getHtmlVideo(video) {
     var result = await yt.videos.list({
         part: "snippet, id, contentDetails",
         id: video
     });
     
-    var output = getOutput(result.data.items[0], false, index);
+    var output = getOutput(result.data.items[0], false);
     return output;  //html of video
 }
 
@@ -33,19 +32,23 @@ async function search(query) {
 
 
 // Build output
-function getOutput(item, isSearch, i) {
+function getOutput(item, isSearch) {
     var title = item.snippet.title;
     var thumb = item.snippet.thumbnails.default.url;
     var channelTitle = item.snippet.channelTitle;
-    var onClickScript = `class = "media" `;
+    var onClickScript = ` class="media-left" `;
     if(isSearch){
         var videoID = item.id.videoId;
         var xButton = ``;
-        onClickScript = `class="media hand" onClick = "addVideo('${videoID}')" data-dismiss="modal"`;
+        onClickScript = `class="media-left pointer" onClick = "addVideo('${videoID}')"`;
     }
     else {
         var videoID = item.id;
-        var xButton = `<button type="button" class="close" onClick="removeVideo('${videoID}')">×</button>`;
+        var xButton = `
+            <div class="media-right">
+                <button class="delete" onClick="removeVideo('${videoID}')"></button>
+            </div>
+        `;
         var time="";
         let duration = item.contentDetails.duration;
         let hours = duration.match(/(\d+)H/);
@@ -53,7 +56,7 @@ function getOutput(item, isSearch, i) {
         let seconds = duration.match(/(\d+)S/);
         if (hours) time+=hours[1]+":";
         if (minutes)
-            time+=minutes[1].toString().padStart(2,"0")+":";
+            time+=minutes[1]+":";
         else
             time+="00:";
         if (seconds)
@@ -61,21 +64,24 @@ function getOutput(item, isSearch, i) {
         else
             time+="00";
     }
-
-    var output = `<li class="list-group-item song" video-id="${videoID}">
-            ${xButton}
-            <div ${onClickScript}>
-                <div id="image" style="position:relative">
-                <img class="align-self-center mr-3" src="${thumb}">
+    var output = `
+        <li class="media pointer" video-id="${videoID}" ${onClickScript}>
+            <div class="media-left">
+                <div class="image">
+                    <img src="${thumb}">
                     ${!isSearch?`<div class="time"> ${time} </div>
-                    <div class="play" onclick="playVideo(${i})"></div>`:"" }
+                    <div class="play" onclick="playVideo('${videoID}')"></div>`:"" }
                 </div>
-                <div class="media-body">
-                <h5 class="mt-0">${title}</h5>
-                <small>By <span class="cTitle">${channelTitle}</small>
             </div>
+            <div class="media-content is-completely-center">
+                <div class="content">
+                    <h1 class="title is-size-4-widescreen is-size-3-desktop is-size-2-touch">${title}</h1>
+                    <h5 class="subtitle is-size-6-widescreen is-size-5-desktop is-size-4-touch">by ${channelTitle}</h2>
+                </div>
+            </div>
+            ${xButton}
         </li>
-        <div class="clearfix"></div>`;
+    `;
     return output;
 }
 
