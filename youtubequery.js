@@ -67,7 +67,7 @@ function getOutput(item, isSearch) {
     var output = `
         <li class="media pointer" video-id="${videoID}" ${onClickScript}>
             <div class="media-left">
-                <div class="image">
+                <div class="image has-ratio">
                     <img src="${thumb}">
                     ${!isSearch?`<div class="time"> ${time} </div>
                     <div class="play" onclick="playVideo('${videoID}')"></div>`:"" }
@@ -75,8 +75,8 @@ function getOutput(item, isSearch) {
             </div>
             <div class="media-content is-completely-center">
                 <div class="content">
-                    <h1 class="title is-size-4-widescreen is-size-3-desktop is-size-2-touch">${title}</h1>
-                    <h5 class="subtitle is-size-6-widescreen is-size-5-desktop is-size-4-touch">by ${channelTitle}</h2>
+                    <h1 class="title is-size-5-touch">${title}</h1>
+                    <h5 class="subtitle is-size-7-touch">by ${channelTitle}</h2>
                 </div>
             </div>
             ${xButton}

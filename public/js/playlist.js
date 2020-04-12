@@ -1,6 +1,6 @@
 const gapikey = "AIzaSyBR7EnowNigvDzFmSAm12D53e0_bF-uSd4";
-const queuedAlert = `<div class="notification is-success"> QUEUED </div>`;
-const removedAlert = `<div class="notification is-success"> REMOVED </div>`;
+const addedAlert = `<div class="notification is-success"> ADDED VIDEO </div>`;
+const removedAlert = `<div class="notification is-success"> REMOVED VIDEO </div>`;
 const alreadyQueuedAlert = `<div class="notification is-danger"> ALREADY IN PLAYLIST </div>`;
 const alreadyRemovedAlert = `<div class="notification is-danger"> CAN'T REMOVE VIDEO </div>`;
 var waitingSearch;
@@ -10,6 +10,7 @@ var currentVideoPos = 0;
 var videos;
 var isTemporary = false;
 var playlistID = window.location.pathname.split("/")[2];
+var myId = document.cookie.match(/user=[^;]+/)[0].substring(5);
 
 //socket stuff
 var socket = io.connect(window.location.hostname + ":" + window.location.port);
@@ -17,20 +18,33 @@ socket.on('connect', function () { //On connect request videos
     getVideos();
 });
 
-socket.on(playlistID + " video", function (playlist) { //Server just sent video list. Let's process it.
+socket.on(playlistID + "video", function (playlist) { //Server just sent video list. Let's process it.
     videos = playlist.videos;
-    isTemporary=playlist.isTemporary
-    updateVideoList(playlist, playlist.isRemoved);
+    isTemporary = playlist.isTemporary
+    updateVideoList(playlist.videos, playlist.nonOwnedVideos);
 });
 
-socket.on(playlistID, function (data) { //Server just sent an error. Let's manage it.
+socket.on(playlistID + "change", function (data) { //Something in playlist changed. Let's request it again.
+    $("#alerts").empty();
+    clearTimeout(timeoutAlert);
+    if (data.isRemoved)
+        $("#alerts").append(removedAlert);
+    else
+        $("#alerts").append(addedAlert);
+    timeoutAlert = setTimeout(() => {
+        $("#alerts").empty();
+    }, 2500);
+    getVideos();
+});
+
+socket.on(playlistID +"error"+ myId, function (data) { //Server just sent an error. Let's manage it.
     if (data.state == "ERROR") {
         $("#alerts").empty();
         clearTimeout(timeoutAlert);
         if (data.isRemoved)
-            $("#alerts").append(alreadyRemovedAlert);
-        else
             $("#alerts").append(alreadyQueuedAlert);
+        else
+            $("#alerts").append(alreadyRemovedAlert);
         timeoutAlert = setTimeout(() => {
             $("#alerts").empty();
         }, 2500);
@@ -39,7 +53,7 @@ socket.on(playlistID, function (data) { //Server just sent an error. Let's manag
     getVideos();
 });
 
-socket.on(playlistID + " " + document.cookie.match(/user=[^;]+/)[0].substring(5), function (data) { //Server just sent search results. Let's manage it.
+socket.on(playlistID + "search" + myId, function (data) { //Server just sent search results. Let's manage it.
     if (data.state == "SUCCESS") {
         $("#results").empty();
         $("#results").append(data.html);
@@ -92,25 +106,20 @@ function modalClose() {
     $(".modal").removeClass("is-active");
 }
 
-async function updateVideoList(playlist, isRemove) {
+async function updateVideoList(videos, nonOwnedVideos) {
     $("#videos-list").empty();
 
-    for (let i = 0; i < playlist.videos.length; i++) {
-        $("#videos-list").append(playlist.videos[i].html);
+    for (let i = 0; i < nonOwnedVideos.length; i++) { //remove x button from non owned videos
+        console.log(nonOwnedVideos[i])
+        videos[nonOwnedVideos[i]].html = videos[nonOwnedVideos[i]].html.replace(/<div class="media-right">[\s\S]*div>/, "");
+    }
+
+    for (let i = 0; i < videos.length; i++) {
+        $("#videos-list").append(videos[i].html);
     }
 
     if (player == null) {
         openVideo();
-    } else {
-        $("#alerts").empty();
-        clearTimeout(timeoutAlert);
-        if (isRemove)
-            $("#alerts").append(removedAlert);
-        else
-            $("#alerts").append(queuedAlert);
-        timeoutAlert = setTimeout(() => {
-            $("#alerts").empty();
-        }, 2500);
     }
 }
 

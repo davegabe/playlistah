@@ -1,42 +1,38 @@
-<div class="hero is-fullheight has-background-dark is-bold has-text-black">
-    <div class="hero-body">
-        <div class="container is-desktop is-fluid is-completely-center">
+<body>
+    <div class="section fullscreen has-background-dark is-bold has-text-black">
+        <div class="section">
             <div class="box is-completely-center">
                 <form action="/" class="formPlaylist" method="POST">
                     <center>
-                        <h1 class="title is-size-3-widescreen is-size-2-desktop is-size-2-touch">Playlistah</h1>
-                        <h1 class="subtitle is-size-4-widescreen is-size-3-desktop is-size-3-touch">Create your
+                        <h1 class="title">Playlistah</h1>
+                        <h1 class="subtitle">Create your
                             collaborative playlists</h1>
-                        <input id="name" type="text"
-                            class="input is-size-5-widescreen is-size-4-desktop is-size-4-touch has-text-centered" name="name"
+                        <input id="name" type="text" class="input has-text-centered" name="name"
                             placeholder="Playlist name" pattern="[a-zA-Z0-9_]{1,100}"
                             title="Only letters, numbers and underscore accepted" required />
                         </br>
-                        <label class="checkbox is-size-5-widescreen is-size-4-desktop is-size-4-touch"
-                            for="isTemporary">
-                            <input class="form-check-input is-size-5-widescreen is-size-4-desktop is-size-4-touch"
-                                type="checkbox" value="1" name="isTemporary" id="isTemporary">
+                        <label class="checkbox" for="isTemporary">
+                            <input class="form-check-input" type="checkbox" value="1" name="isTemporary"
+                                id="isTemporary">
                             Temporary playlist?
                         </label>
                         </br>
                         </br>
-                        <div class="control has-text-centered is-size-5-widescreen is-size-4-desktop is-size-4-touch">
-                            <input type="submit"
-                                class="button is-dark is-size-5-widescreen is-size-4-desktop is-size-4-touch"
-                                value="Submit" />
+                        <div class="control has-text-centered">
+                            <input type="submit" class="button is-dark" value="Submit" />
                         </div>
                     </center>
                 </form>
             </div>
         </div>
+
+        <nav class="navbar is-light is-fixed-bottom">
+            <div class="content has-text-centered">
+                <p class="is-completely-center">
+                    <strong>Playlistah</strong> by <a href="http://davegabe.it">DaveGabe</a>.
+                    Source code available on <a href="http://github.com/davegabe/playlistah">Github</a>
+                </p>
+            </div>
+        </nav>
     </div>
-    <footer class="footer">
-        <div class="content has-text-centered">
-            <p>
-                <strong>Playlistah</strong> by <a href="http://davegabe.it">DaveGabe</a>.
-                Source code available on <a href="http://github.com/davegabe/playlistah">Github</a>
-            </p>
-        </div>
-    </footer>
-</div>
-</div>
+</body>

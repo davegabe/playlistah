@@ -1,11 +1,21 @@
+html,
+body{
+  height: 100%;
+}
+
+.fullscreen {
+  min-height: 100%;
+  display: flex !important;
+}
+
 .is-completely-center {
 	margin: auto;
 	padding: 10px;
 }
 
 .is-vertically-center {
-	margin-top: auto;
-	margin-bottom: auto;
+	margin-top: 5px;
+	margin-bottom: 5px;
 	margin-right: 10px;
 }
 
@@ -27,11 +37,6 @@
 
 .pointer {
 	cursor: pointer;
-}
-
-.inner {
-	margin-top: 3.25rem;
-	margin-bottom: 3.25rem;
 }
 
 .back {
@@ -60,14 +65,26 @@
 
 .video {
 	position: absolute;
-	bottom: 9rem;
+	bottom: 4rem;
+	max-width: 15rem;
 	right: 3%;
 	margin: 0px auto;
 }
 
 .alerts {
 	position: absolute;
-	bottom: 6rem;
+	bottom: 3rem;
 	right: 20%;
 	left: 20%;
+}
+
+.title {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.is-fluid-zero{
+	max-width: none;
+    width: 100% !important; 
 }
