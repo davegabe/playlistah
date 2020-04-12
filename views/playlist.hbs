@@ -1,10 +1,12 @@
 <body class="has-navbar-fixed-top has-navbar-fixed-bottom">
     <section class='section fullscreen has-background-white is-bold'>
         <nav class="navbar has-background-dark is-fixed-top columns is-mobile">
-            <div class="column">
-                <a id="arrowHide" href="/" class="button is-dark is-vertically-center">&lt;</a>
+            <div class="column is-vertically-center">
+                <a href="/">
+                <p class="title has-text-white is-dark has-margin-left">&lt;</p>
+                </a>
             </div>
-            <div class="column has-text-centered is-completely-center">
+            <div class="column has-text-centered is-vertically-center">
                 <p class="title has-text-white is-dark">
                     {{name}}
                 </p>
@@ -24,7 +26,7 @@
                     <section class="modal-card-body">
                         <input class="input" type="text" placeholder="Search on YouTube" id="query"
                             onkeyup="return submitSearch()">
-                        <ul id="results">
+                        <ul class="container is-fluid-zero" id="results">
                         </ul>
                     </section>
                 </div>
@@ -40,7 +42,7 @@
             <div class="column">
             </div>
             <div class="column has-text-centered is-completely-center">
-                <button class="button is-dark modal-button">
+                <button class="button is-dark modal-button is-medium is-vertically-center">
                     Add video
                 </button>
             </div>
@@ -49,7 +51,7 @@
             </div>
             <div class="column has-text-right">
                 <button id="arrowHide" type="button" onclick="showPlayer()"
-                    class="button is-dark is-vertically-center">V</button>
+                    class="button is-dark is-vertically-center has-margin-right">V</button>
             </div>
             <div class="alerts has-text-centered" id="alerts"></div>
         </nav>

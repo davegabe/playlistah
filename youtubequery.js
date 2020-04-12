@@ -17,9 +17,10 @@ async function getHtmlVideo(video) {
 }
 
 async function search(query) {
-    var output;
+    var output="";
     var result = await yt.search.list({
         part: "snippet, id",
+        type: "video",
         q: query,
         type: "video",
         maxResults: 5

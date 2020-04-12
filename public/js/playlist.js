@@ -54,9 +54,8 @@ socket.on(playlistID +"error"+ myId, function (data) { //Server just sent an err
 });
 
 socket.on(playlistID + "search" + myId, function (data) { //Server just sent search results. Let's manage it.
-    if (data.state == "SUCCESS") {
-        $("#results").empty();
-        $("#results").append(data.html);
+    if (data.state == "SUCCESS") {        
+        $("#results").html(data.html);
     }
 });
 
@@ -110,7 +109,6 @@ async function updateVideoList(videos, nonOwnedVideos) {
     $("#videos-list").empty();
 
     for (let i = 0; i < nonOwnedVideos.length; i++) { //remove x button from non owned videos
-        console.log(nonOwnedVideos[i])
         videos[nonOwnedVideos[i]].html = videos[nonOwnedVideos[i]].html.replace(/<div class="media-right">[\s\S]*div>/, "");
     }
 
@@ -181,7 +179,6 @@ function onPlayerStateChange(event) {
             animatePlayVideo(oldCurrentVideoId);
         }
         let newIndexVideo = findIndexVideo(currentVideoId) + 1;
-        console.log(newIndexVideo);
 
         if (newIndexVideo < videos.length) {
             if (newIndexVideo == 0) { //if can't find the prev video (-1)

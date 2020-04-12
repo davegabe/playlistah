@@ -14,9 +14,15 @@ body{
 }
 
 .is-vertically-center {
-	margin-top: 5px;
-	margin-bottom: 5px;
-	margin-right: 10px;
+	margin-top: 6px;
+	margin-bottom: 6px;
+}
+
+.has-margin-left{
+	margin-left: 1.5rem;
+}
+.has-margin-right{
+	margin-right: 1.5rem;
 }
 
 .is-inline-block {
@@ -39,12 +45,6 @@ body{
 	cursor: pointer;
 }
 
-.back {
-	padding-left: 10px;
-	padding-top: 15px;
-}
-
-
 .play {
 	position: absolute;
 	width: 100%;
@@ -65,15 +65,15 @@ body{
 
 .video {
 	position: absolute;
-	bottom: 4rem;
+	bottom: 5.2rem;
 	max-width: 15rem;
-	right: 3%;
+	right: 1rem;
 	margin: 0px auto;
 }
 
 .alerts {
 	position: absolute;
-	bottom: 3rem;
+	bottom: 5rem;
 	right: 20%;
 	left: 20%;
 }
@@ -87,4 +87,8 @@ body{
 .is-fluid-zero{
 	max-width: none;
     width: 100% !important; 
+}
+
+.media-content{
+	overflow-x:auto;
 }
