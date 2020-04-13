@@ -1,5 +1,5 @@
 FROM node:10
-WORKDIR /home/dave/playlistah
+WORKDIR /playlistah
 COPY package*.json ./
 RUN npm install
 COPY . .
