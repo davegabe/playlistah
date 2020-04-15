@@ -17,9 +17,11 @@ app.use((req, res, next) => {
   let user = req.cookies.user;
   if (!user) {
     let user = new Date().getTime().toString();
-    res.cookie('user', user, { expires: new Date(new Date().getTime() + (1000*60*60*24*365*10)) });
+    res.cookie('user', user, {
+      expires: new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 365 * 10))
+    });
   }
-  next()
+  next();
 })
 
 

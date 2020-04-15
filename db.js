@@ -33,9 +33,6 @@ get = (name, session) => {
                     delete result.videos[i].user;
                     delete result.videos[i].session;
                     result.videos[i].session = isSessionValid;
-                    //if(result.videos[i].html==""){
-                    //    result.videos[i].html = await getHtmlVideo(video.id, video.session, video.id, result.videos.length);
-                    //}
                 }
                 resolve(result);
             }
@@ -57,8 +54,8 @@ add = (playlist) => {
                     resolve("Playlist created.");
                 });
             } else {
-                if((result.videos.length>0 && Date.now()-result.date > 1000*60*60*24 /*1 giorno*/) || result.videos.length==0){
-                    Playlist.update(result,playlist);
+                if ((result.videos.length > 0 && Date.now() - result.date > 1000 * 60 * 60 * 24 /*1 giorno*/ ) || result.videos.length == 0) {
+                    Playlist.update(result, playlist);
                     resolve("Playlist created.");
                 } else {
                     reject(Error("Playlist already exist."));

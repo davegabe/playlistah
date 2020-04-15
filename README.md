@@ -30,7 +30,6 @@ RELEASE:    https://playlistah.davegabe.it/
     - DB_HOST: url db    (ex. *address*:*port*/*database*)
     - DB_USER: user db
     - DB_PASS: password db
-    - COOKIE_SECRET: key used for encrypting cookie
     - GAPI_KEY: key for Youtube APIs (https://developers.google.com/youtube/registering_an_application)
 - That's it. Now ```npm run``` and you'll find it at *localhost:2728*
 
@@ -42,6 +41,5 @@ RELEASE:    https://playlistah.davegabe.it/
     - DB_HOST: url db    (ex. *address*:*port*/*database*)
     - DB_USER: user db
     - DB_PASS: password db
-    - COOKIE_SECRET: key used for encrypting cookie
     - GAPI_KEY: key for Youtube APIs (https://developers.google.com/youtube/registering_an_application)
-- Run the image using ```docker run -d -it -e DB_HOST="yourvalue" -e DB_USER="yourvalue" -e DB_PASS="yourvalue" -e COOKIE_SECRET="yourvalue" -e GAPI_KEY="yourvalue" -p 2728:2728 davegabe/playlistah``` and you'll find it at *localhost:2728*
+- Run the image using ```docker run -d -it -e DB_HOST="yourvalue" -e DB_USER="yourvalue" -e DB_PASS="yourvalue" -e GAPI_KEY="yourvalue" -p 2728:2728 davegabe/playlistah``` and you'll find it at *localhost:2728*

@@ -37,7 +37,7 @@ socket.on(playlistID + "change", function (data) { //Something in playlist chang
     getVideos();
 });
 
-socket.on(playlistID +"error"+ myId, function (data) { //Server just sent an error. Let's manage it.
+socket.on(playlistID + "error" + myId, function (data) { //Server just sent an error. Let's manage it.
     if (data.state == "ERROR") {
         $("#alerts").empty();
         clearTimeout(timeoutAlert);
@@ -54,7 +54,7 @@ socket.on(playlistID +"error"+ myId, function (data) { //Server just sent an err
 });
 
 socket.on(playlistID + "search" + myId, function (data) { //Server just sent search results. Let's manage it.
-    if (data.state == "SUCCESS") {        
+    if (data.state == "SUCCESS") {
         $("#results").html(data.html);
     }
 });

@@ -15,14 +15,13 @@ router.get('/', function (req, res, next) {
 router.post('/', async function (req, res, next) {
     let playlist = {
         name: req.body.name,
-        isTemporary: (req.body.isTemporary=="1"?true:false),
+        isTemporary: (req.body.isTemporary == "1" ? true : false),
         date: Date.now(),
         admin: req.cookies.user
     };
     try {
         await addPlaylist(playlist)
-    } catch (e) {
-    }
+    } catch (e) {}
     res.redirect("/p/" + playlist.name);
 });
 
