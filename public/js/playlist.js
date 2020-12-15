@@ -1,4 +1,3 @@
-const gapikey = "AIzaSyBR7EnowNigvDzFmSAm12D53e0_bF-uSd4";
 const addedAlert = `<div class="notification is-success"> ADDED VIDEO </div>`;
 const removedAlert = `<div class="notification is-success"> REMOVED VIDEO </div>`;
 const alreadyQueuedAlert = `<div class="notification is-danger"> ALREADY IN PLAYLIST </div>`;
