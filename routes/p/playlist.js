@@ -34,21 +34,24 @@ module.exports = function (io) {
         }
     });
 
-    /* FOR DEBUG
     router.get("/:name/videos", async function (req, res, next) {
         let name = req.params.name;
         let session = req.cookies._id;
         try {
             var playlist = await getPlaylist(name, session);
+            playlist.videos.map(video=>{
+                delete video._id
+                delete video.session
+                delete video.html
+                return video
+            })
             res.json({
-                state: "SUCCESS",
                 videos: playlist.videos
             });
         } catch (e) {
             next(createError(404));
         }
     });
-    */
 
     io.on("connection", (socket) => {
         socket.on('GETPLAYLIST', async function (data) { //Requested list of videos. If success emit success status and video list, else emit error.
